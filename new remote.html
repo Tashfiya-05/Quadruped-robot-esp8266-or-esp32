@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Quadruped Control</title>
+    <style>
+        body { 
+            text-align: center; 
+            font-family: Arial; 
+            background: url('https://i.pinimg.com/736x/73/ef/38/73ef387ef114d2aa1f70f541d66b5582.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            color: white;
+        }
+        .remote-container {
+            background: url('remote-bg.png') no-repeat center center;
+            background-size: contain;
+            padding: 20px;
+            display: inline-block;
+            border-radius: 20px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button { 
+            width: 120px; 
+            height: 50px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            border: 3px solid white; 
+            background-color: rgba(0, 0, 0, 0.6); 
+            color: white; 
+            font-weight: bold;
+            text-transform: capitalize;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:active {
+            background-color: white;
+            color: black;
+        }
+        .oval-button {
+            width: 100px;
+            height: 40px;
+            border-radius: 50px;
+        }
+        .rect-button {
+            width: 120px;
+            height: 50px;
+            border-radius: 15px;
+        }
+        .diamond-button {
+            width: 60px;
+            height: 60px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: -0.7mm;
+        }
+        .diamond-button span {
+            transform: rotate(-45deg);
+        }
+        .bottom-image {
+            width: 150px;
+            margin-top: 20px;
+        }
+        .bottom-image {
+            width: 50%; /* Full width */
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        var connection = new WebSocket('ws://' + window.location.hostname + ':81/');
+
+        function sendCommand(command, button) {
+            connection.send(command);
+            document.getElementById('status').innerText = "Command: " + command;
+            button.style.backgroundColor = "white";
+            button.style.color = "black";
+            setTimeout(() => {
+                button.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+                button.style.color = "white";
+            }, 300);
+        }
+    </script>
+</head>
+<body>
+    <h1>ESP32 Quadruped Robot</h1>
+    <h3>Live Video Stream:</h3>
+    <img src="http://YOUR_ESP32_CAM_IP:81/stream" width="320">
+    <br><br>
+    
+    <div class="remote-container">
+        <div class="button-container">
+            <div class="row">
+                <button class="oval-button" onmousedown="sendCommand('SLEEP', this)" onmouseup="sendCommand('STOP', this)">Sleep</button>
+                <button class="rect-button" onmousedown="sendCommand('FORWARD', this)" onmouseup="sendCommand('STOP', this)">Forward</button>
+                <button class="oval-button" onmousedown="sendCommand('STANDBY', this)" onmouseup="sendCommand('STOP', this)">Standby</button>
+            </div>
+            <div class="row">
+                <button class="rect-button" onmousedown="sendCommand('LEFT', this)" onmouseup="sendCommand('STOP', this)">Left</button>
+                <button class="diamond-button" onmousedown="sendCommand('WAVE', this)" onmouseup="sendCommand('STOP', this)"><span>Wave</span></button>
+                <button class="rect-button" onmousedown="sendCommand('RIGHT', this)" onmouseup="sendCommand('STOP', this)">Right</button>
+            </div>
+            <div class="row" style="margin-top: 0.7mm;">
+                <button class="rect-button" onmousedown="sendCommand('BACKWARD', this)" onmouseup="sendCommand('STOP', this)">Backward</button>
+            </div>
+            <div class="row">
+                <button class="rect-button" style="width: 200px;" onmousedown="sendCommand('RECORD', this)" onmouseup="sendCommand('STOP', this)">Record</button>
+                <button class="rect-button" style="width: 200px;" onmousedown="sendCommand('FLASH', this)" onmouseup="sendCommand('STOP', this)">Flash</button>
+        </div>
+            </div>
+        </div>
+        
+         <!-- Bottom Image -->
+    <img src="https://cdn.prod.website-files.com/66fde7460b4f2adcf2976ab9/6716d81b68de1547d81c59dc_Group%2089.png" class="bottom-image">
+    </div>
+
+    <br>
+    <p id="status">Command status...</p>
+</body>
+</html>
